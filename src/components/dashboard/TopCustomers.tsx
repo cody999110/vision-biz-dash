@@ -17,9 +17,9 @@ const TopCustomers = () => {
         {topCustomers.map((customer, index) => (
           <div
             key={customer.name}
-            className="flex items-center gap-3 p-3 rounded-lg bg-secondary/30 hover:bg-secondary/50 transition-colors group"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/40 hover:bg-accent/50 transition-colors group"
           >
-            <div className="w-7 h-7 rounded-lg bg-primary/15 flex items-center justify-center text-xs font-bold text-primary font-display shrink-0">
+            <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center text-xs font-bold text-primary font-display shrink-0">
               {index + 1}
             </div>
             <div className="flex-1 min-w-0">

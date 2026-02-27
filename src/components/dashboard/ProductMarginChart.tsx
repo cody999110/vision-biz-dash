@@ -16,11 +16,11 @@ const ProductMarginChart = () => {
       <div className="chart-container h-[260px]">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={productGrossMargin} layout="vertical" margin={{ top: 0, right: 20, left: 10, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="hsl(228, 15%, 20%)" strokeOpacity={0.5} horizontal={false} />
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(240, 10%, 90%)" strokeOpacity={0.8} horizontal={false} />
             <XAxis
               type="number"
               domain={[0, 70]}
-              tick={{ fill: "hsl(220, 12%, 55%)", fontSize: 11 }}
+              tick={{ fill: "hsl(240, 6%, 45%)", fontSize: 11 }}
               axisLine={false}
               tickLine={false}
               tickFormatter={(v) => `${v}%`}
@@ -28,24 +28,25 @@ const ProductMarginChart = () => {
             <YAxis
               type="category"
               dataKey="name"
-              tick={{ fill: "hsl(220, 12%, 55%)", fontSize: 12, fontFamily: "Space Grotesk" }}
+              tick={{ fill: "hsl(240, 6%, 45%)", fontSize: 12, fontFamily: "Space Grotesk" }}
               axisLine={false}
               tickLine={false}
               width={65}
             />
             <Tooltip
               contentStyle={{
-                background: "hsl(228, 22%, 12%)",
-                border: "1px solid hsl(228, 15%, 25%)",
+                background: "hsl(0, 0%, 100%)",
+                border: "1px solid hsl(240, 10%, 90%)",
                 borderRadius: "8px",
                 fontSize: 12,
-                color: "hsl(220, 20%, 92%)",
+                color: "hsl(240, 10%, 15%)",
+                boxShadow: "0 4px 12px hsl(240, 10%, 80%, 0.3)",
               }}
               formatter={(value: number) => [`${value}%`, "毛利率"]}
             />
             <Bar dataKey="margin" radius={[0, 4, 4, 0]} barSize={24}>
               {productGrossMargin.map((entry, index) => (
-                <Cell key={index} fill={entry.color} opacity={0.85} />
+                <Cell key={index} fill={entry.color} opacity={0.9} />
               ))}
             </Bar>
           </BarChart>

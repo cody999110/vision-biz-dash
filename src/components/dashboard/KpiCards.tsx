@@ -48,11 +48,11 @@ const KpiCards = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: index * 0.1, duration: 0.5 }}
-          className="glass-card-glow p-5 group hover:border-primary/30 transition-all duration-300"
+          className="glass-card-glow p-5 group hover:border-primary/40 transition-all duration-300"
         >
           <div className="flex items-center justify-between mb-3">
             <span className="section-title text-xs">{card.title}</span>
-            <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+            <div className="w-9 h-9 rounded-lg bg-primary/8 flex items-center justify-center group-hover:bg-primary/15 transition-colors">
               <card.icon className="w-4 h-4 text-primary" />
             </div>
           </div>
