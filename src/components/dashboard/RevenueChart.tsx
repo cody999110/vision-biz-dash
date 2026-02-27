@@ -17,7 +17,6 @@ const RevenueChart = () => {
     );
   };
 
-  // Merge data for multi-year view
   const chartData = revenueGrossProfitData["2024"].map((item, i) => {
     const point: Record<string, unknown> = { month: item.month };
     selectedYears.forEach((year) => {
@@ -32,11 +31,11 @@ const RevenueChart = () => {
   });
 
   const colorMap: Record<string, { bar: string; line: string }> = {
-    "2020": { bar: "hsl(262, 60%, 35%)", line: "hsl(262, 60%, 55%)" },
-    "2021": { bar: "hsl(195, 85%, 30%)", line: "hsl(195, 85%, 50%)" },
-    "2022": { bar: "hsl(150, 60%, 30%)", line: "hsl(150, 60%, 50%)" },
-    "2023": { bar: "hsl(35, 90%, 35%)", line: "hsl(35, 90%, 55%)" },
-    "2024": { bar: "hsl(262, 60%, 45%)", line: "hsl(195, 85%, 50%)" },
+    "2020": { bar: "hsl(262, 60%, 75%)", line: "hsl(262, 60%, 50%)" },
+    "2021": { bar: "hsl(210, 80%, 75%)", line: "hsl(210, 80%, 50%)" },
+    "2022": { bar: "hsl(150, 60%, 70%)", line: "hsl(150, 60%, 42%)" },
+    "2023": { bar: "hsl(35, 90%, 75%)", line: "hsl(35, 90%, 50%)" },
+    "2024": { bar: "hsl(262, 60%, 65%)", line: "hsl(262, 80%, 45%)" },
   };
 
   return (
@@ -65,11 +64,11 @@ const RevenueChart = () => {
       <div className="chart-container h-[320px]">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={chartData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="hsl(228, 15%, 20%)" strokeOpacity={0.5} />
-            <XAxis dataKey="month" tick={{ fill: "hsl(220, 12%, 55%)", fontSize: 11 }} axisLine={false} tickLine={false} />
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(240, 10%, 90%)" strokeOpacity={0.8} />
+            <XAxis dataKey="month" tick={{ fill: "hsl(240, 6%, 45%)", fontSize: 11 }} axisLine={false} tickLine={false} />
             <YAxis
               yAxisId="left"
-              tick={{ fill: "hsl(220, 12%, 55%)", fontSize: 11 }}
+              tick={{ fill: "hsl(240, 6%, 45%)", fontSize: 11 }}
               axisLine={false}
               tickLine={false}
               tickFormatter={(v) => `${v >= 10000 ? `${v / 10000}万` : v}`}
@@ -77,7 +76,7 @@ const RevenueChart = () => {
             <YAxis
               yAxisId="right"
               orientation="right"
-              tick={{ fill: "hsl(220, 12%, 55%)", fontSize: 11 }}
+              tick={{ fill: "hsl(240, 6%, 45%)", fontSize: 11 }}
               axisLine={false}
               tickLine={false}
               tickFormatter={(v) => `${v}%`}
@@ -85,11 +84,12 @@ const RevenueChart = () => {
             />
             <Tooltip
               contentStyle={{
-                background: "hsl(228, 22%, 12%)",
-                border: "1px solid hsl(228, 15%, 25%)",
+                background: "hsl(0, 0%, 100%)",
+                border: "1px solid hsl(240, 10%, 90%)",
                 borderRadius: "8px",
                 fontSize: 12,
-                color: "hsl(220, 20%, 92%)",
+                color: "hsl(240, 10%, 15%)",
+                boxShadow: "0 4px 12px hsl(240, 10%, 80%, 0.3)",
               }}
               formatter={(value: number, name: string) => {
                 if (name.startsWith("grossMargin")) return [`${value}%`, "毛利率"];
@@ -97,7 +97,7 @@ const RevenueChart = () => {
               }}
             />
             <Legend
-              wrapperStyle={{ fontSize: 11, color: "hsl(220, 12%, 55%)" }}
+              wrapperStyle={{ fontSize: 11, color: "hsl(240, 6%, 45%)" }}
               formatter={(value) => {
                 if (value.startsWith("revenue")) return `收入(${value.split("_")[1]})`;
                 if (value.startsWith("grossProfit")) return `毛利(${value.split("_")[1]})`;
@@ -109,10 +109,10 @@ const RevenueChart = () => {
                 key={`rev_${year}`}
                 yAxisId="left"
                 dataKey={`revenue_${year}`}
-                fill={colorMap[year]?.bar || "hsl(262,60%,45%)"}
+                fill={colorMap[year]?.bar || "hsl(262,60%,65%)"}
                 radius={[3, 3, 0, 0]}
                 barSize={selectedYears.length > 2 ? 12 : 20}
-                opacity={0.85}
+                opacity={0.9}
               />
             ))}
             {selectedYears.map((year) => (
@@ -121,9 +121,9 @@ const RevenueChart = () => {
                 yAxisId="right"
                 type="monotone"
                 dataKey={`grossMargin_${year}`}
-                stroke={colorMap[year]?.line || "hsl(195,85%,50%)"}
+                stroke={colorMap[year]?.line || "hsl(262,80%,45%)"}
                 strokeWidth={2}
-                dot={{ r: 3, fill: colorMap[year]?.line || "hsl(195,85%,50%)" }}
+                dot={{ r: 3, fill: colorMap[year]?.line || "hsl(262,80%,45%)" }}
                 activeDot={{ r: 5 }}
               />
             ))}

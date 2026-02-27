@@ -46,16 +46,17 @@ const ExpensesChart = () => {
                 dataKey="amount"
               >
                 {data.map((entry, index) => (
-                  <Cell key={index} fill={entry.color} opacity={0.85} stroke="none" />
+                  <Cell key={index} fill={entry.color} opacity={0.9} stroke="none" />
                 ))}
               </Pie>
               <Tooltip
                 contentStyle={{
-                  background: "hsl(228, 22%, 12%)",
-                  border: "1px solid hsl(228, 15%, 25%)",
+                  background: "hsl(0, 0%, 100%)",
+                  border: "1px solid hsl(240, 10%, 90%)",
                   borderRadius: "8px",
                   fontSize: 12,
-                  color: "hsl(220, 20%, 92%)",
+                  color: "hsl(240, 10%, 15%)",
+                  boxShadow: "0 4px 12px hsl(240, 10%, 80%, 0.3)",
                 }}
                 formatter={(value: number) => [`¥${value.toLocaleString()}万`, "金额"]}
               />
@@ -64,7 +65,7 @@ const ExpensesChart = () => {
                 y="48%"
                 textAnchor="middle"
                 dominantBaseline="central"
-                fill="hsl(220, 20%, 92%)"
+                fill="hsl(240, 10%, 15%)"
                 fontSize={14}
                 fontWeight={700}
                 fontFamily="Space Grotesk"
@@ -76,7 +77,7 @@ const ExpensesChart = () => {
                 y="60%"
                 textAnchor="middle"
                 dominantBaseline="central"
-                fill="hsl(220, 12%, 55%)"
+                fill="hsl(240, 6%, 45%)"
                 fontSize={10}
               >
                 总费用

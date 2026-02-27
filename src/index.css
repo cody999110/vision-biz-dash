@@ -6,57 +6,57 @@
 
 @layer base {
   :root {
-    --background: 228 25% 8%;
-    --foreground: 220 20% 92%;
+    --background: 240 20% 97%;
+    --foreground: 240 10% 15%;
 
-    --card: 228 22% 12%;
-    --card-foreground: 220 20% 92%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 15%;
 
-    --popover: 228 22% 14%;
-    --popover-foreground: 220 20% 92%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 15%;
 
-    --primary: 262 60% 55%;
+    --primary: 262 60% 50%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 228 20% 18%;
-    --secondary-foreground: 220 20% 85%;
+    --secondary: 262 20% 95%;
+    --secondary-foreground: 262 40% 35%;
 
-    --muted: 228 18% 16%;
-    --muted-foreground: 220 12% 55%;
+    --muted: 240 10% 93%;
+    --muted-foreground: 240 6% 45%;
 
-    --accent: 195 85% 50%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 262 50% 94%;
+    --accent-foreground: 262 60% 40%;
 
-    --destructive: 0 72% 55%;
+    --destructive: 0 72% 50%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 228 15% 20%;
-    --input: 228 15% 22%;
-    --ring: 262 60% 55%;
+    --border: 240 10% 90%;
+    --input: 240 10% 90%;
+    --ring: 262 60% 50%;
 
     --radius: 0.75rem;
 
-    --chart-1: 262 60% 55%;
-    --chart-2: 195 85% 50%;
-    --chart-3: 150 60% 50%;
-    --chart-4: 35 90% 55%;
-    --chart-5: 340 70% 55%;
+    --chart-1: 262 60% 50%;
+    --chart-2: 210 80% 50%;
+    --chart-3: 150 60% 42%;
+    --chart-4: 35 90% 50%;
+    --chart-5: 340 70% 50%;
 
-    --gradient-primary: linear-gradient(135deg, hsl(262, 60%, 55%), hsl(195, 85%, 50%));
-    --gradient-card: linear-gradient(145deg, hsl(228, 22%, 14%), hsl(228, 22%, 10%));
-    --gradient-glow: linear-gradient(135deg, hsl(262, 60%, 55%, 0.15), hsl(195, 85%, 50%, 0.08));
-    
-    --shadow-glow: 0 0 30px hsl(262, 60%, 55%, 0.12);
-    --shadow-card: 0 4px 24px hsl(228, 25%, 4%, 0.5);
+    --gradient-primary: linear-gradient(135deg, hsl(262, 60%, 50%), hsl(262, 80%, 65%));
+    --gradient-card: linear-gradient(145deg, hsl(0, 0%, 100%), hsl(240, 20%, 98%));
+    --gradient-glow: linear-gradient(135deg, hsl(262, 60%, 50%, 0.06), hsl(262, 80%, 65%, 0.03));
 
-    --sidebar-background: 228 22% 10%;
-    --sidebar-foreground: 220 20% 85%;
-    --sidebar-primary: 262 60% 55%;
+    --shadow-card: 0 1px 3px hsl(240, 10%, 80%, 0.3), 0 4px 16px hsl(240, 10%, 80%, 0.15);
+    --shadow-glow: 0 0 20px hsl(262, 60%, 50%, 0.08);
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 240 10% 30%;
+    --sidebar-primary: 262 60% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 228 18% 16%;
-    --sidebar-accent-foreground: 220 20% 85%;
-    --sidebar-border: 228 15% 20%;
-    --sidebar-ring: 262 60% 55%;
+    --sidebar-accent: 262 50% 96%;
+    --sidebar-accent-foreground: 262 40% 35%;
+    --sidebar-border: 240 10% 90%;
+    --sidebar-ring: 262 60% 50%;
   }
 }
 
@@ -77,7 +77,7 @@
 
 @layer components {
   .glass-card {
-    @apply bg-card/80 backdrop-blur-xl border border-border/50 rounded-xl;
+    @apply bg-card border border-border rounded-xl;
     box-shadow: var(--shadow-card);
   }
 
@@ -99,14 +99,14 @@
   }
 
   .filter-chip {
-    @apply px-3 py-1.5 text-xs font-medium rounded-lg border border-border/50 
-           bg-secondary/50 text-muted-foreground cursor-pointer 
-           transition-all duration-200 hover:bg-primary/20 hover:text-primary-foreground hover:border-primary/40;
+    @apply px-3 py-1.5 text-xs font-medium rounded-lg border border-border
+           bg-muted/50 text-muted-foreground cursor-pointer
+           transition-all duration-200 hover:bg-primary/10 hover:text-primary hover:border-primary/30;
   }
 
   .filter-chip-active {
-    @apply bg-primary/20 text-primary-foreground border-primary/50;
-    box-shadow: 0 0 12px hsl(262, 60%, 55%, 0.2);
+    @apply bg-primary/10 text-primary border-primary/40 font-semibold;
+    box-shadow: 0 0 8px hsl(262, 60%, 50%, 0.12);
   }
 
   .section-title {
@@ -115,13 +115,14 @@
   }
 
   .pulse-dot {
-    @apply w-2 h-2 rounded-full bg-accent;
+    @apply w-2 h-2 rounded-full;
+    background: hsl(150, 60%, 42%);
     animation: pulse-glow 2s ease-in-out infinite;
   }
 
   @keyframes pulse-glow {
-    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 hsl(195, 85%, 50%, 0.4); }
-    50% { opacity: 0.8; box-shadow: 0 0 0 6px hsl(195, 85%, 50%, 0); }
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 hsl(150, 60%, 42%, 0.4); }
+    50% { opacity: 0.8; box-shadow: 0 0 0 6px hsl(150, 60%, 42%, 0); }
   }
 
   .chart-container {
@@ -130,12 +131,12 @@
 
   .chart-container .recharts-cartesian-grid-horizontal line,
   .chart-container .recharts-cartesian-grid-vertical line {
-    stroke: hsl(228, 15%, 20%);
-    stroke-opacity: 0.5;
+    stroke: hsl(240, 10%, 88%);
+    stroke-opacity: 0.6;
   }
 
   .chart-container .recharts-text {
-    fill: hsl(220, 12%, 55%);
+    fill: hsl(240, 6%, 45%);
     font-size: 11px;
   }
 }
