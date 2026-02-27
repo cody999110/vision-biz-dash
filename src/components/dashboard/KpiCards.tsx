@@ -1,0 +1,79 @@
+import { motion } from "framer-motion";
+import { Wallet, TrendingUp, TrendingDown, Banknote, PiggyBank, BarChart3 } from "lucide-react";
+import { fundBalance } from "@/data/mockData";
+
+const formatCurrency = (value: number) => {
+  if (value >= 100000000) return `${(value / 100000000).toFixed(2)}亿`;
+  if (value >= 10000) return `${(value / 10000).toFixed(0)}万`;
+  return value.toLocaleString();
+};
+
+const cards = [
+  {
+    title: "资金余额",
+    value: fundBalance.total,
+    icon: Wallet,
+    change: fundBalance.change,
+    subtitle: "较上月",
+  },
+  {
+    title: "银行存款",
+    value: fundBalance.bankDeposit,
+    icon: Banknote,
+    change: 8.3,
+    subtitle: "较上月",
+  },
+  {
+    title: "短期投资",
+    value: fundBalance.shortTermInvestment,
+    icon: PiggyBank,
+    change: 15.2,
+    subtitle: "较上月",
+  },
+  {
+    title: "现金及等价物",
+    value: fundBalance.cashOnHand,
+    icon: BarChart3,
+    change: -2.1,
+    subtitle: "较上月",
+  },
+];
+
+const KpiCards = () => {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      {cards.map((card, index) => (
+        <motion.div
+          key={card.title}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: index * 0.1, duration: 0.5 }}
+          className="glass-card-glow p-5 group hover:border-primary/30 transition-all duration-300"
+        >
+          <div className="flex items-center justify-between mb-3">
+            <span className="section-title text-xs">{card.title}</span>
+            <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+              <card.icon className="w-4 h-4 text-primary" />
+            </div>
+          </div>
+          <div className="kpi-value text-foreground mb-2">
+            ¥{formatCurrency(card.value)}
+          </div>
+          <div className="flex items-center gap-1.5 text-xs">
+            {card.change > 0 ? (
+              <TrendingUp className="w-3.5 h-3.5 text-chart-3" />
+            ) : (
+              <TrendingDown className="w-3.5 h-3.5 text-destructive" />
+            )}
+            <span className={card.change > 0 ? "text-chart-3" : "text-destructive"}>
+              {card.change > 0 ? "+" : ""}{card.change}%
+            </span>
+            <span className="text-muted-foreground">{card.subtitle}</span>
+          </div>
+        </motion.div>
+      ))}
+    </div>
+  );
+};
+
+export default KpiCards;
