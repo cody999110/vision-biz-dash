@@ -7,7 +7,7 @@ import {
 import { revenueGrossProfitData, years } from "@/data/mockData";
 
 const RevenueChart = () => {
-  const [selectedYears, setSelectedYears] = useState<string[]>(["2024"]);
+  const [selectedYears, setSelectedYears] = useState<string[]>(["2025"]);
 
   const toggleYear = (year: string) => {
     setSelectedYears((prev) =>
@@ -80,7 +80,7 @@ const RevenueChart = () => {
               axisLine={false}
               tickLine={false}
               tickFormatter={(v) => `${v}%`}
-              domain={[30, 65]}
+              domain={[10, 35]}
             />
             <Tooltip
               contentStyle={{
