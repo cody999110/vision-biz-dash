@@ -19,7 +19,7 @@ const ProductMarginChart = () => {
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(240, 10%, 90%)" strokeOpacity={0.8} horizontal={false} />
             <XAxis
               type="number"
-              domain={[0, 70]}
+              domain={[0, 35]}
               tick={{ fill: "hsl(240, 6%, 45%)", fontSize: 11 }}
               axisLine={false}
               tickLine={false}

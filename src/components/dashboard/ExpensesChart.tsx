@@ -4,7 +4,7 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { operatingExpenses } from "@/data/mockData";
 
 const ExpensesChart = () => {
-  const [selectedYear, setSelectedYear] = useState<"2024" | "2023">("2024");
+  const [selectedYear, setSelectedYear] = useState<"2025" | "2024">("2025");
   const data = operatingExpenses[selectedYear];
   const total = data.reduce((sum, item) => sum + item.amount, 0);
 
@@ -20,7 +20,7 @@ const ExpensesChart = () => {
           运营费用结构
         </h3>
         <div className="flex gap-1.5">
-          {(["2023", "2024"] as const).map((year) => (
+          {(["2024", "2025"] as const).map((year) => (
             <button
               key={year}
               onClick={() => setSelectedYear(year)}
