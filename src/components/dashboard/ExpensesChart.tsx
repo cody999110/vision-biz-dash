@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { operatingExpenses } from "@/data/mockData";
 
 const ExpensesChart = () => {
+  const navigate = useNavigate();
   const [selectedYear, setSelectedYear] = useState<"2025" | "2024">("2025");
   const data = operatingExpenses[selectedYear];
   const total = data.reduce((sum, item) => sum + item.amount, 0);
@@ -13,7 +15,8 @@ const ExpensesChart = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.7, duration: 0.5 }}
-      className="glass-card p-5"
+      className="glass-card p-5 cursor-pointer hover:shadow-lg transition-shadow"
+      onClick={() => navigate("/expense-analysis")}
     >
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-display text-base font-semibold text-foreground">
