@@ -1,14 +1,17 @@
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from "recharts";
 import { productGrossMargin } from "@/data/mockData";
 
 const ProductMarginChart = () => {
+  const navigate = useNavigate();
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.6, duration: 0.5 }}
-      className="glass-card p-5"
+      className="glass-card p-5 cursor-pointer hover:shadow-lg transition-shadow"
+      onClick={() => navigate("/revenue-analysis")}
     >
       <h3 className="font-display text-base font-semibold text-foreground mb-4">
         核心产品毛利率
