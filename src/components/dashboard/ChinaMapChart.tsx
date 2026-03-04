@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { geoMercator, geoPath } from "d3-geo";
 import * as topojson from "topojson-client";
@@ -36,6 +37,7 @@ const getColor = (value: number, max: number) => {
 };
 
 const ChinaMapChart = () => {
+  const navigate = useNavigate();
   const [hoveredProvince, setHoveredProvince] = useState<string | null>(null);
   const [tooltipPos, setTooltipPos] = useState({ x: 0, y: 0 });
   const [geoData, setGeoData] = useState<ProvinceFeature[] | null>(null);
@@ -80,7 +82,8 @@ const ChinaMapChart = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.4, duration: 0.5 }}
-      className="glass-card p-5"
+      className="glass-card p-5 cursor-pointer hover:shadow-lg transition-shadow"
+      onClick={() => navigate("/revenue-analysis")}
     >
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-display text-base font-semibold text-foreground">

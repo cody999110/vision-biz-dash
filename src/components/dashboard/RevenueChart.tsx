@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid,
@@ -7,6 +8,7 @@ import {
 import { revenueGrossProfitData, years } from "@/data/mockData";
 
 const RevenueChart = () => {
+  const navigate = useNavigate();
   const [selectedYears, setSelectedYears] = useState<string[]>(["2025"]);
 
   const toggleYear = (year: string) => {
@@ -43,7 +45,8 @@ const RevenueChart = () => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.3, duration: 0.5 }}
-      className="glass-card p-5"
+      className="glass-card p-5 cursor-pointer hover:shadow-lg transition-shadow"
+      onClick={() => navigate("/revenue-analysis")}
     >
       <div className="flex items-center justify-between mb-4 flex-wrap gap-2">
         <h3 className="font-display text-base font-semibold text-foreground">
