@@ -24,7 +24,7 @@ const DashboardHeader = () => {
       </div>
       <div className="flex items-center gap-2 text-xs text-muted-foreground bg-card border border-border rounded-lg px-3 py-2">
         <Calendar className="w-3.5 h-3.5 text-primary" />
-        <span>数据更新: 2024年12月</span>
+        <span>数据更新: 2025年12月</span>
         <div className="pulse-dot ml-1" />
       </div>
     </motion.div>

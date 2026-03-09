@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import { Wallet, TrendingUp, TrendingDown, Banknote, PiggyBank, BarChart3 } from "lucide-react";
 import { fundBalance } from "@/data/mockData";
 
@@ -40,6 +41,8 @@ const cards = [
 ];
 
 const KpiCards = () => {
+  const navigate = useNavigate();
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       {cards.map((card, index) => (
@@ -48,7 +51,8 @@ const KpiCards = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: index * 0.1, duration: 0.5 }}
-          className="glass-card-glow p-5 group hover:border-primary/40 transition-all duration-300"
+          className="glass-card-glow p-5 group hover:border-primary/40 transition-all duration-300 cursor-pointer"
+          onClick={() => navigate("/fund-analysis")}
         >
           <div className="flex items-center justify-between mb-3">
             <span className="section-title text-xs">{card.title}</span>
