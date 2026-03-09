@@ -122,7 +122,7 @@ export function generateFundGroupedData(
 
   const groups: Record<string, FundDetailRow[]> = {};
   rows.forEach(row => {
-    const key = dimensions.map(d => String((row as Record<string, unknown>)[d] ?? "")).join("|||");
+    const key = dimensions.map(d => String((row as unknown as Record<string, unknown>)[d] ?? "")).join("|||");
     if (!groups[key]) groups[key] = [];
     groups[key].push(row);
   });
