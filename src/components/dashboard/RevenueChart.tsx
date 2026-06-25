@@ -1,44 +1,74 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid,
   Tooltip, ResponsiveContainer, Legend,
 } from "recharts";
-import { revenueGrossProfitData, years } from "@/data/mockData";
+import { Check, ChevronDown, Calendar } from "lucide-react";
+import { getMonthlyRevenueData, businessLines, businessLineWeights } from "@/data/mockData";
+import {
+  Popover, PopoverContent, PopoverTrigger,
+} from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 
 const RevenueChart = () => {
   const navigate = useNavigate();
-  const [selectedYears, setSelectedYears] = useState<string[]>(["2025"]);
+  const allMonths = useMemo(() => getMonthlyRevenueData(), []);
+  // Default: last 12 months
+  const [selectedMonths, setSelectedMonths] = useState<string[]>(
+    () => allMonths.slice(-12).map(m => m.key)
+  );
+  const [businessLine, setBusinessLine] = useState<string>("全部业务");
+  const [monthPickerOpen, setMonthPickerOpen] = useState(false);
 
-  const toggleYear = (year: string) => {
-    setSelectedYears((prev) =>
-      prev.includes(year)
-        ? prev.length > 1 ? prev.filter((y) => y !== year) : prev
-        : [...prev, year]
+  const toggleMonth = (key: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSelectedMonths(prev =>
+      prev.includes(key)
+        ? prev.length > 1 ? prev.filter(k => k !== key) : prev
+        : [...prev, key]
     );
   };
 
-  const chartData = revenueGrossProfitData["2024"].map((item, i) => {
-    const point: Record<string, unknown> = { month: item.month };
-    selectedYears.forEach((year) => {
-      const yearData = revenueGrossProfitData[year as keyof typeof revenueGrossProfitData];
-      if (yearData && yearData[i]) {
-        point[`revenue_${year}`] = yearData[i].revenue;
-        point[`grossProfit_${year}`] = yearData[i].grossProfit;
-        point[`grossMargin_${year}`] = yearData[i].grossMargin;
-      }
-    });
-    return point;
-  });
-
-  const colorMap: Record<string, { bar: string; line: string }> = {
-    "2020": { bar: "hsl(262, 60%, 75%)", line: "hsl(262, 60%, 50%)" },
-    "2021": { bar: "hsl(210, 80%, 75%)", line: "hsl(210, 80%, 50%)" },
-    "2022": { bar: "hsl(150, 60%, 70%)", line: "hsl(150, 60%, 42%)" },
-    "2023": { bar: "hsl(35, 90%, 75%)", line: "hsl(35, 90%, 50%)" },
-    "2024": { bar: "hsl(262, 60%, 65%)", line: "hsl(262, 80%, 45%)" },
+  const selectQuickRange = (n: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSelectedMonths(allMonths.slice(-n).map(m => m.key));
   };
+
+  const selectYear = (year: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSelectedMonths(allMonths.filter(m => m.year === year).map(m => m.key));
+  };
+
+  // Filter + apply business line weighting
+  const chartData = useMemo(() => {
+    const weight = businessLineWeights[businessLine];
+    return allMonths
+      .filter(m => selectedMonths.includes(m.key))
+      .map(m => {
+        const revenue = Math.round(m.revenue * weight.revenueWeight);
+        const grossMargin = Math.max(8, Math.min(45, m.grossMargin + weight.marginAdjust));
+        const grossProfit = Math.round(revenue * grossMargin / 100);
+        return {
+          label: m.label,
+          revenue,
+          grossProfit,
+          grossMargin,
+        };
+      });
+  }, [selectedMonths, businessLine, allMonths]);
+
+  // Group months by year for picker UI
+  const monthsByYear = useMemo(() => {
+    const groups: Record<string, typeof allMonths> = {};
+    allMonths.forEach(m => {
+      if (!groups[m.year]) groups[m.year] = [];
+      groups[m.year].push(m);
+    });
+    return groups;
+  }, [allMonths]);
 
   return (
     <motion.div
@@ -52,23 +82,120 @@ const RevenueChart = () => {
         <h3 className="font-display text-base font-semibold text-foreground">
           收入与毛利趋势
         </h3>
-        <div className="flex gap-1.5 flex-wrap">
-          {years.map((year) => (
-            <button
-              key={year}
-              onClick={() => toggleYear(year)}
-              className={`filter-chip ${selectedYears.includes(year) ? "filter-chip-active" : ""}`}
+        <div className="flex items-center gap-2 flex-wrap" onClick={(e) => e.stopPropagation()}>
+          {/* Business Line filter */}
+          <div className="flex gap-1 flex-wrap">
+            {businessLines.map(bl => (
+              <button
+                key={bl}
+                onClick={(e) => { e.stopPropagation(); setBusinessLine(bl); }}
+                className={`filter-chip ${businessLine === bl ? "filter-chip-active" : ""}`}
+              >
+                {bl}
+              </button>
+            ))}
+          </div>
+
+          {/* Month picker */}
+          <Popover open={monthPickerOpen} onOpenChange={setMonthPickerOpen}>
+            <PopoverTrigger asChild>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-7 text-xs gap-1.5 border-border bg-card hover:bg-primary/5 hover:border-primary/30"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <Calendar className="w-3 h-3" />
+                已选 {selectedMonths.length} 个月
+                <ChevronDown className="w-3 h-3" />
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent
+              className="w-[420px] p-3 pointer-events-auto"
+              align="end"
+              onClick={(e) => e.stopPropagation()}
             >
-              {year}
-            </button>
-          ))}
+              <div className="space-y-3">
+                {/* Quick ranges */}
+                <div className="flex items-center justify-between gap-2 pb-2 border-b border-border">
+                  <span className="text-xs font-semibold text-muted-foreground">快捷选择</span>
+                  <div className="flex gap-1">
+                    <Button variant="outline" size="sm" className="h-6 text-[10px] px-2" onClick={(e) => selectQuickRange(3, e)}>近3月</Button>
+                    <Button variant="outline" size="sm" className="h-6 text-[10px] px-2" onClick={(e) => selectQuickRange(6, e)}>近6月</Button>
+                    <Button variant="outline" size="sm" className="h-6 text-[10px] px-2" onClick={(e) => selectQuickRange(12, e)}>近12月</Button>
+                    <Button variant="outline" size="sm" className="h-6 text-[10px] px-2" onClick={(e) => selectQuickRange(24, e)}>近24月</Button>
+                  </div>
+                </div>
+
+                {/* Year groups with month grid */}
+                <div className="max-h-[280px] overflow-y-auto space-y-3 pr-1">
+                  {Object.entries(monthsByYear).reverse().map(([year, months]) => (
+                    <div key={year}>
+                      <div className="flex items-center justify-between mb-1.5">
+                        <span className="text-xs font-semibold text-foreground">{year}年</span>
+                        <button
+                          onClick={(e) => selectYear(year, e)}
+                          className="text-[10px] text-primary hover:underline"
+                        >
+                          选择全年
+                        </button>
+                      </div>
+                      <div className="grid grid-cols-6 gap-1">
+                        {months.map(m => {
+                          const active = selectedMonths.includes(m.key);
+                          return (
+                            <button
+                              key={m.key}
+                              onClick={(e) => toggleMonth(m.key, e)}
+                              className={`text-[11px] py-1.5 rounded border transition-all ${
+                                active
+                                  ? "bg-primary text-primary-foreground border-primary"
+                                  : "bg-card text-muted-foreground border-border hover:border-primary/40 hover:text-foreground"
+                              }`}
+                            >
+                              {m.monthNum}月
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Footer summary */}
+                <div className="flex items-center justify-between pt-2 border-t border-border">
+                  <span className="text-[10px] text-muted-foreground">已选 {selectedMonths.length} 个月份</span>
+                  <Button size="sm" variant="ghost" className="h-6 text-[10px]" onClick={(e) => { e.stopPropagation(); setMonthPickerOpen(false); }}>
+                    完成
+                  </Button>
+                </div>
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
       </div>
-      <div className="chart-container h-[320px]">
+
+      {/* Active filter summary */}
+      <div className="flex items-center gap-2 mb-3 text-[10px] text-muted-foreground" onClick={(e) => e.stopPropagation()}>
+        <Badge variant="outline" className="text-[10px] py-0 h-5 border-primary/30 text-primary bg-primary/5">
+          {businessLine}
+        </Badge>
+        {chartData.length > 0 && (
+          <span>{chartData[0].label} ~ {chartData[chartData.length - 1].label}</span>
+        )}
+      </div>
+
+      <div className="chart-container h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={chartData} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(240, 10%, 90%)" strokeOpacity={0.8} />
-            <XAxis dataKey="month" tick={{ fill: "hsl(240, 6%, 45%)", fontSize: 11 }} axisLine={false} tickLine={false} />
+            <XAxis
+              dataKey="label"
+              tick={{ fill: "hsl(240, 6%, 45%)", fontSize: 10 }}
+              axisLine={false}
+              tickLine={false}
+              interval={chartData.length > 18 ? 2 : chartData.length > 12 ? 1 : 0}
+            />
             <YAxis
               yAxisId="left"
               tick={{ fill: "hsl(240, 6%, 45%)", fontSize: 11 }}
@@ -83,7 +210,7 @@ const RevenueChart = () => {
               axisLine={false}
               tickLine={false}
               tickFormatter={(v) => `${v}%`}
-              domain={[10, 35]}
+              domain={[0, 50]}
             />
             <Tooltip
               contentStyle={{
@@ -95,41 +222,39 @@ const RevenueChart = () => {
                 boxShadow: "0 4px 12px hsl(240, 10%, 80%, 0.3)",
               }}
               formatter={(value: number, name: string) => {
-                if (name.startsWith("grossMargin")) return [`${value}%`, "毛利率"];
-                return [`¥${value.toLocaleString()}万`, name.startsWith("revenue") ? "收入" : "毛利"];
+                if (name === "毛利率") return [`${value}%`, name];
+                return [`¥${value.toLocaleString()}万`, name];
               }}
             />
-            <Legend
-              wrapperStyle={{ fontSize: 11, color: "hsl(240, 6%, 45%)" }}
-              formatter={(value) => {
-                if (value.startsWith("revenue")) return `收入(${value.split("_")[1]})`;
-                if (value.startsWith("grossProfit")) return `毛利(${value.split("_")[1]})`;
-                return `毛利率(${value.split("_")[1]})`;
-              }}
+            <Legend wrapperStyle={{ fontSize: 11, color: "hsl(240, 6%, 45%)" }} />
+            <Bar
+              yAxisId="left"
+              dataKey="revenue"
+              name="收入"
+              fill="hsl(262, 60%, 65%)"
+              radius={[3, 3, 0, 0]}
+              barSize={chartData.length > 18 ? 10 : chartData.length > 12 ? 14 : 22}
+              opacity={0.9}
             />
-            {selectedYears.map((year) => (
-              <Bar
-                key={`rev_${year}`}
-                yAxisId="left"
-                dataKey={`revenue_${year}`}
-                fill={colorMap[year]?.bar || "hsl(262,60%,65%)"}
-                radius={[3, 3, 0, 0]}
-                barSize={selectedYears.length > 2 ? 12 : 20}
-                opacity={0.9}
-              />
-            ))}
-            {selectedYears.map((year) => (
-              <Line
-                key={`gm_${year}`}
-                yAxisId="right"
-                type="monotone"
-                dataKey={`grossMargin_${year}`}
-                stroke={colorMap[year]?.line || "hsl(262,80%,45%)"}
-                strokeWidth={2}
-                dot={{ r: 3, fill: colorMap[year]?.line || "hsl(262,80%,45%)" }}
-                activeDot={{ r: 5 }}
-              />
-            ))}
+            <Bar
+              yAxisId="left"
+              dataKey="grossProfit"
+              name="毛利"
+              fill="hsl(195, 75%, 60%)"
+              radius={[3, 3, 0, 0]}
+              barSize={chartData.length > 18 ? 10 : chartData.length > 12 ? 14 : 22}
+              opacity={0.85}
+            />
+            <Line
+              yAxisId="right"
+              type="monotone"
+              dataKey="grossMargin"
+              name="毛利率"
+              stroke="hsl(35, 90%, 50%)"
+              strokeWidth={2}
+              dot={{ r: 3, fill: "hsl(35, 90%, 50%)" }}
+              activeDot={{ r: 5 }}
+            />
           </ComposedChart>
         </ResponsiveContainer>
       </div>
