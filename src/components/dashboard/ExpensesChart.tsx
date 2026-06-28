@@ -83,7 +83,7 @@ const ExpensesChart = () => {
           transition={{ duration: 0.25 }}
           className="flex gap-4"
         >
-          <div className="chart-container h-[220px] w-[220px] shrink-0 relative">
+          <div className="chart-container h-[200px] w-[180px] shrink-0 relative">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
