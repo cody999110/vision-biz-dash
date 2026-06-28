@@ -83,7 +83,7 @@ const ExpensesChart = () => {
           transition={{ duration: 0.25 }}
           className="flex gap-4"
         >
-          <div className="chart-container h-[220px] w-[220px] shrink-0 relative">
+          <div className="chart-container h-[200px] w-[180px] shrink-0 relative">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -154,14 +154,14 @@ const ExpensesChart = () => {
               <button
                 key={item.category}
                 onClick={() => handleSliceClick(item.category)}
-                className="w-full flex items-center gap-2 text-xs hover:bg-muted/40 rounded px-1.5 py-1 -mx-1.5 transition-colors text-left"
+                className="w-full flex items-center gap-1.5 text-xs hover:bg-muted/40 rounded px-1.5 py-1 -mx-1.5 transition-colors text-left"
               >
                 <div className="w-2.5 h-2.5 rounded-sm shrink-0" style={{ background: item.color }} />
-                <span className="text-muted-foreground flex-1 truncate">{item.category}</span>
-                <span className="text-foreground font-medium tabular-nums">
-                  ¥{item.amount.toLocaleString()}万
+                <span className="text-muted-foreground flex-1 min-w-0 truncate" title={item.category}>{item.category}</span>
+                <span className="text-foreground font-medium tabular-nums shrink-0 text-[11px]">
+                  ¥{item.amount.toLocaleString()}
                 </span>
-                <span className="text-muted-foreground w-10 text-right tabular-nums">
+                <span className="text-muted-foreground w-9 text-right tabular-nums shrink-0 text-[11px]">
                   {item.percentage}%
                 </span>
               </button>
