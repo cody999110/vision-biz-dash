@@ -1,0 +1,9 @@
+from fastapi import APIRouter
+
+from app.api.v1 import dashboard, datasets, import_templates, meta
+
+api_router = APIRouter()
+api_router.include_router(import_templates.router, prefix="/import/templates", tags=["import-templates"])
+api_router.include_router(datasets.router, prefix="/import/datasets", tags=["datasets"])
+api_router.include_router(meta.router, prefix="/meta", tags=["meta"])
+api_router.include_router(dashboard.router, prefix="/dashboard", tags=["dashboard"])

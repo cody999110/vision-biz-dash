@@ -1,0 +1,142 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 20% 97%;
+    --foreground: 240 10% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 15%;
+
+    --primary: 262 60% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 262 20% 95%;
+    --secondary-foreground: 262 40% 35%;
+
+    --muted: 240 10% 93%;
+    --muted-foreground: 240 6% 45%;
+
+    --accent: 262 50% 94%;
+    --accent-foreground: 262 60% 40%;
+
+    --destructive: 0 72% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 240 10% 90%;
+    --input: 240 10% 90%;
+    --ring: 262 60% 50%;
+
+    --radius: 0.75rem;
+
+    --chart-1: 262 60% 50%;
+    --chart-2: 210 80% 50%;
+    --chart-3: 150 60% 42%;
+    --chart-4: 35 90% 50%;
+    --chart-5: 340 70% 50%;
+
+    --gradient-primary: linear-gradient(135deg, hsl(262, 60%, 50%), hsl(262, 80%, 65%));
+    --gradient-card: linear-gradient(145deg, hsl(0, 0%, 100%), hsl(240, 20%, 98%));
+    --gradient-glow: linear-gradient(135deg, hsl(262, 60%, 50%, 0.06), hsl(262, 80%, 65%, 0.03));
+
+    --shadow-card: 0 1px 3px hsl(240, 10%, 80%, 0.3), 0 4px 16px hsl(240, 10%, 80%, 0.15);
+    --shadow-glow: 0 0 20px hsl(262, 60%, 50%, 0.08);
+
+    --sidebar-background: 0 0% 100%;
+    --sidebar-foreground: 240 10% 30%;
+    --sidebar-primary: 262 60% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 262 50% 96%;
+    --sidebar-accent-foreground: 262 40% 35%;
+    --sidebar-border: 240 10% 90%;
+    --sidebar-ring: 262 60% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    font-family: 'Inter', sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', sans-serif;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-card border border-border rounded-xl;
+    box-shadow: var(--shadow-card);
+  }
+
+  .glass-card-glow {
+    @apply glass-card;
+    box-shadow: var(--shadow-card), var(--shadow-glow);
+  }
+
+  .gradient-text {
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .kpi-value {
+    font-family: 'Space Grotesk', sans-serif;
+    @apply text-3xl font-bold tracking-tight;
+  }
+
+  .filter-chip {
+    @apply px-3 py-1.5 text-xs font-medium rounded-lg border border-border
+           bg-muted/50 text-muted-foreground cursor-pointer
+           transition-all duration-200 hover:bg-primary/10 hover:text-primary hover:border-primary/30;
+  }
+
+  .filter-chip-active {
+    @apply bg-primary/10 text-primary border-primary/40 font-semibold;
+    box-shadow: 0 0 8px hsl(262, 60%, 50%, 0.12);
+  }
+
+  .section-title {
+    font-family: 'Space Grotesk', sans-serif;
+    @apply text-sm font-semibold tracking-wide uppercase text-muted-foreground;
+  }
+
+  .pulse-dot {
+    @apply w-2 h-2 rounded-full;
+    background: hsl(150, 60%, 42%);
+    animation: pulse-glow 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 hsl(150, 60%, 42%, 0.4); }
+    50% { opacity: 0.8; box-shadow: 0 0 0 6px hsl(150, 60%, 42%, 0); }
+  }
+
+  .chart-container {
+    @apply w-full h-full;
+  }
+
+  .chart-container .recharts-cartesian-grid-horizontal line,
+  .chart-container .recharts-cartesian-grid-vertical line {
+    stroke: hsl(240, 10%, 88%);
+    stroke-opacity: 0.6;
+  }
+
+  .chart-container .recharts-text {
+    fill: hsl(240, 6%, 45%);
+    font-size: 11px;
+  }
+}

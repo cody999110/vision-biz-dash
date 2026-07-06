@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.env
+*.egg-info/
+
+# User-uploaded datasets (local only)
+storage/datasets/*.json
+storage/datasets/active.json
+!storage/datasets/.gitkeep
