@@ -10,6 +10,7 @@ class Settings(BaseSettings):
     api_v1_prefix: str = "/api/v1"
     cors_origins: str = "http://localhost:8080,http://127.0.0.1:8080,http://localhost:5173,http://127.0.0.1:5173"
     storage_dir: Path = Path(__file__).resolve().parent.parent / "storage" / "datasets"
+    mgmt_config_dir: Path = Path(__file__).resolve().parent.parent / "storage" / "mgmt_configs"
 
     @property
     def cors_origin_list(self) -> list[str]:

@@ -1,23 +1,13 @@
 import { motion } from "framer-motion";
-import { Activity, Building2, Calendar, FlaskConical } from "lucide-react";
+import { Activity, Calendar } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
-import CampaignManager from "@/components/campaign/CampaignManager";
-import { Badge } from "@/components/ui/badge";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectSeparator,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import CompanySwitcher from "@/components/layout/CompanySwitcher";
+import WorkspaceMenu from "@/components/layout/WorkspaceMenu";
 import { api } from "@/lib/api";
-import { DEMO_VIEW, useDataSource } from "@/contexts/DataSourceContext";
+import { useDataSource } from "@/contexts/DataSourceContext";
 
 const DashboardHeader = () => {
-  const { selectedView, isDemo, companies, currentCompany, selectView } = useDataSource();
+  const { selectedView, isDemo, currentCompany } = useDataSource();
 
   const freshnessDatasetId = currentCompany
     ? currentCompany.datasets.revenue ??
@@ -33,68 +23,34 @@ const DashboardHeader = () => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: -10 }}
+      initial={{ opacity: 0, y: -8 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4 }}
-      className="flex items-center justify-between mb-6 gap-3 flex-wrap"
+      transition={{ duration: 0.3 }}
+      className="flex items-center justify-between mb-6 gap-4"
     >
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "var(--gradient-primary)" }}>
-          <Activity className="w-5 h-5 text-primary-foreground" />
+      <div className="flex items-center gap-3 min-w-0">
+        <div
+          className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
+          style={{ background: "var(--gradient-primary)" }}
+        >
+          <Activity className="w-4 h-4 text-primary-foreground" />
         </div>
-        <div>
-          <h1 className="font-display text-xl font-bold text-foreground tracking-tight">
+        <div className="min-w-0">
+          <h1 className="font-display text-lg font-semibold text-foreground tracking-tight leading-none">
             财务数据看板
           </h1>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            切换数据视图，查看示例公司或已上传公司的独立数据
-          </p>
+          <CompanySwitcher className="mt-1" />
         </div>
       </div>
 
-      <div className="flex items-center gap-2 flex-wrap">
-        <Select value={selectedView} onValueChange={selectView}>
-          <SelectTrigger className="w-[190px] h-9 text-sm gap-1.5">
-            {isDemo ? (
-              <FlaskConical className="w-3.5 h-3.5 text-muted-foreground" />
-            ) : (
-              <Building2 className="w-3.5 h-3.5 text-primary" />
-            )}
-            <SelectValue placeholder="选择数据视图" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectGroup>
-              <SelectLabel>示例</SelectLabel>
-              <SelectItem value={DEMO_VIEW}>演示数据（示例公司）</SelectItem>
-            </SelectGroup>
-            {companies.length > 0 && (
-              <>
-                <SelectSeparator />
-                <SelectGroup>
-                  <SelectLabel>已上传公司</SelectLabel>
-                  {companies.map(company => (
-                    <SelectItem key={company.name} value={company.name}>
-                      {company.name}
-                    </SelectItem>
-                  ))}
-                </SelectGroup>
-              </>
-            )}
-          </SelectContent>
-        </Select>
-
-        <CampaignManager />
-
-        <div className="flex items-center gap-2 text-xs text-muted-foreground bg-card border border-border rounded-lg px-3 py-2">
-          <Calendar className="w-3.5 h-3.5 text-primary" />
-          <span>数据更新: {freshness?.label ?? "加载中..."}</span>
-          {isDemo ? (
-            <Badge variant="secondary" className="text-[10px] h-5">演示</Badge>
-          ) : (
-            <Badge variant="default" className="text-[10px] h-5">Campaign</Badge>
-          )}
-          <div className="pulse-dot ml-1" />
+      <div className="flex items-center gap-3 shrink-0">
+        <div className="hidden sm:flex items-center gap-1.5 text-xs text-muted-foreground">
+          <Calendar className="w-3.5 h-3.5" />
+          <span>{freshness?.label ?? "—"}</span>
+          <span className="text-border">·</span>
+          <span>{isDemo ? "演示" : "Campaign"}</span>
         </div>
+        <WorkspaceMenu />
       </div>
     </motion.div>
   );

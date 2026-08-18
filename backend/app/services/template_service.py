@@ -76,7 +76,7 @@ class TemplateService:
             sheet.column_dimensions[get_column_letter(index)].width = max(len(col.label), len(col.key)) + 4
 
         dict_sheet = workbook.create_sheet("字段说明")
-        dict_sheet.append(["column_key", "中文名称", "必填", "类型", "说明", "枚举值", "示例"])
+        dict_sheet.append(["column_key", "中文名称", "必填", "类型", "说明", "参考取值", "示例"])
         for col in template.columns:
             dict_sheet.append([
                 col.key,

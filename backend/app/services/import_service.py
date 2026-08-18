@@ -69,11 +69,9 @@ def _normalize_row(raw: dict[str, str], template: ImportTemplateDefinition) -> t
             else:
                 normalized[column.key] = canonical
         else:
+            # Campaign dimensions (主体/业务线/费用大类/币种等) belong to each
+            # company upload. Template enum_values are examples only, never blockers.
             normalized[column.key] = raw_value
-            if column.enum_values and raw_value not in column.enum_values:
-                errors.append(
-                    f"字段 {column.label} 枚举值非法: {raw_value}，允许值: {' / '.join(column.enum_values)}"
-                )
 
     return normalized, errors
 
@@ -179,3 +177,40 @@ def import_dataset_file(dataset_id: str, content: bytes) -> DatasetRecord:
 
 def new_batch_id() -> str:
     return str(uuid.uuid4())
+
+
+def _csv_cell(value: Any) -> str:
+    if value is None:
+        return ""
+    if isinstance(value, bool):
+        return str(value)
+    if isinstance(value, int):
+        return str(value)
+    if isinstance(value, float):
+        if value.is_integer():
+            return str(int(value))
+        text = f"{value:.10f}".rstrip("0").rstrip(".")
+        return text or "0"
+    return str(value)
+
+
+def _safe_filename_part(text: str) -> str:
+    cleaned = "".join("_" if ch in '\\/:*?"<>|' else ch for ch in text).strip()
+    return cleaned or "dataset"
+
+
+def export_dataset_csv(record: DatasetRecord) -> tuple[str, bytes]:
+    """Rebuild an upload-compatible CSV (key row + label row + data rows)."""
+    template = get_template(record.template_code)
+    if template is None:
+        raise ImportValidationError(f"未知模板: {record.template_code}")
+
+    buffer = io.StringIO()
+    writer = csv.writer(buffer, lineterminator="\n")
+    writer.writerow([col.key for col in template.columns])
+    writer.writerow([col.label for col in template.columns])
+    for row in record.rows:
+        writer.writerow([_csv_cell(row.get(col.key)) for col in template.columns])
+
+    filename = f"{_safe_filename_part(record.company)}_{record.domain}.csv"
+    return filename, buffer.getvalue().encode("utf-8-sig")

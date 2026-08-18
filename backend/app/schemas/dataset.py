@@ -52,9 +52,15 @@ class DatasetListResponse(BaseModel):
     total: int
 
 
+class DatasetColumn(BaseModel):
+    key: str
+    label: str
+
+
 class DatasetDetail(DatasetSummary):
     errors: list[str] = Field(default_factory=list)
     preview_rows: list[dict[str, str | float | int | None]] = Field(default_factory=list)
+    columns: list[DatasetColumn] = Field(default_factory=list)
 
 
 class UploadResult(BaseModel):

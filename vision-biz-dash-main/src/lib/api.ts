@@ -42,6 +42,11 @@ export interface DatasetSummary {
   activated_at: string | null;
 }
 
+export interface DatasetColumn {
+  key: string;
+  label: string;
+}
+
 export interface DatasetListResponse {
   items: DatasetSummary[];
   total: number;
@@ -65,6 +70,7 @@ export interface CompanyListResponse {
 export interface DatasetDetail extends DatasetSummary {
   errors: string[];
   preview_rows: Record<string, unknown>[];
+  columns: DatasetColumn[];
 }
 
 export interface UploadResult {
@@ -149,6 +155,103 @@ export interface ExpenseStructureResponse extends LiveDataMeta {
   items: ExpenseStructureItem[];
 }
 
+export interface BusinessLineConfig {
+  id: string;
+  name: string;
+  aliases: string[];
+  catch_all: boolean;
+}
+
+export interface ExpenseGroupConfig {
+  id: string;
+  name: string;
+  subjects: string[];
+}
+
+export type AllocationMatchField = "expense_category" | "department_name" | "expense_subject";
+export type AllocationMethod = "ratio" | "revenue_share";
+
+export interface AllocationRuleConfig {
+  id: string;
+  name: string;
+  match_field: AllocationMatchField;
+  match_values: string[];
+  method: AllocationMethod;
+  ratios: Record<string, number>;
+}
+
+export interface ManagementConfig {
+  company: string;
+  business_lines: BusinessLineConfig[];
+  expense_groups: ExpenseGroupConfig[];
+  allocation_rules: AllocationRuleConfig[];
+  updated_at: string | null;
+}
+
+export interface ManagementConfigUpdate {
+  business_lines: BusinessLineConfig[];
+  expense_groups: ExpenseGroupConfig[];
+  allocation_rules: AllocationRuleConfig[];
+}
+
+export interface ManagementDistincts {
+  company: string;
+  business_lines: string[];
+  departments: string[];
+  expense_categories: string[];
+  expense_subjects: string[];
+  mapped_business_lines: string[];
+  unmapped_business_lines: string[];
+  unmapped_subjects: string[];
+}
+
+export interface PeriodAmounts {
+  h1: number;
+  h2: number;
+  year: number;
+  prior_year: number;
+  yoy: number | null;
+}
+
+export type ReportRowKind = "line" | "unmapped" | "unallocated" | "total";
+
+export interface ReportLineRow {
+  line_id: string;
+  line_name: string;
+  kind: ReportRowKind;
+  revenue: PeriodAmounts;
+  cost: PeriodAmounts;
+  gross_profit: PeriodAmounts;
+  gross_margin: PeriodAmounts;
+  expense: PeriodAmounts;
+  expense_groups: Record<string, PeriodAmounts>;
+}
+
+export interface ManagementKpis {
+  revenue: number;
+  revenue_prior: number;
+  revenue_yoy: number | null;
+  gross_profit: number;
+  gross_margin: number;
+  expense: number;
+  unallocated_expense: number;
+}
+
+export interface ManagementReportResponse {
+  company: string;
+  year: number;
+  prior_year: number;
+  available_years: number[];
+  has_revenue: boolean;
+  has_expense: boolean;
+  kpis: ManagementKpis;
+  lines: ReportLineRow[];
+  groups: { id: string; name: string }[];
+  warnings: string[];
+  summary: string;
+  is_live_data: boolean;
+}
+
 export const api = {
   listTemplates(domain?: Domain) {
     const query = domain ? `?domain=${domain}` : "";
@@ -157,6 +260,14 @@ export const api = {
 
   downloadTemplate(code: string) {
     return `${API_BASE}/import/templates/${code}/download`;
+  },
+
+  downloadDataset(datasetId: string) {
+    return `${API_BASE}/import/datasets/${datasetId}/download`;
+  },
+
+  getDataset(datasetId: string, previewLimit = 50) {
+    return request<DatasetDetail>(`/import/datasets/${datasetId}?preview_limit=${previewLimit}`);
   },
 
   listDatasets(domain?: Domain) {
@@ -229,5 +340,27 @@ export const api = {
     const params = new URLSearchParams({ year });
     if (datasetId) params.set("dataset_id", datasetId);
     return request<ExpenseStructureResponse>(`/dashboard/expense-structure?${params.toString()}`);
+  },
+
+  getManagementConfig(company: string) {
+    return request<ManagementConfig>(`/management/config?company=${encodeURIComponent(company)}`);
+  },
+
+  saveManagementConfig(company: string, payload: ManagementConfigUpdate) {
+    return request<ManagementConfig>(`/management/config?company=${encodeURIComponent(company)}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+  },
+
+  getManagementDistincts(company: string) {
+    return request<ManagementDistincts>(`/management/distincts?company=${encodeURIComponent(company)}`);
+  },
+
+  getManagementReport(company: string, year?: number) {
+    const params = new URLSearchParams({ company });
+    if (year) params.set("year", String(year));
+    return request<ManagementReportResponse>(`/management/report?${params.toString()}`);
   },
 };

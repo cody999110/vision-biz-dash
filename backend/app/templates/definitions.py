@@ -50,13 +50,11 @@ def _col(
     )
 
 
-ENTITY_NAMES = ("集团", "爱芯元智（上海）", "爱芯元智（深圳）", "爱芯元智（北京）")
-FUND_ENTITIES = ("集团合并", "A公司", "B公司", "C公司", "D公司")
+# Shown in template 字段说明 as 参考取值 only. Campaign uploads are not limited to these.
 EXPENSE_CATEGORIES = ("销售费用", "管理费用", "研发费用", "制造费用")
 APPROVAL_STATUSES = ("已审批", "审批中", "已驳回", "待提交")
 CURRENCIES = ("CNY", "USD", "EUR", "HKD", "JPY")
 REVENUE_TYPES = ("收入", "成本")
-BUSINESS_LINES = ("智能安防", "智能驾驶", "AIoT", "芯片IP授权", "技术服务")
 BUSINESS_SOURCES = ("ERP系统", "OA报销", "资金管理系统", "银企直联", "手工录入", "CBS")
 
 
@@ -69,18 +67,18 @@ TPL_EXPENSE_DETAIL = ImportTemplateDefinition(
     fact_table="fact_expense",
     columns=(
         _col("trans_date", "发生日期", required=True, column_type="date", description="YYYY-MM-DD", example="2025-06-15"),
-        _col("entity_name", "主体", required=True, column_type="enum", enum_values=ENTITY_NAMES, example="集团"),
+        _col("entity_name", "主体", required=True, description="法人主体或运营主体，按实际上传填写", example="A公司"),
         _col("department_name", "部门", required=True, example="研发一部"),
         _col("sales_person", "销售人员", example="张伟"),
         _col("customer_name", "客户", example="豪威集团"),
         _col("project_name", "项目", example="AX650N量产"),
-        _col("expense_category", "费用大类", required=True, column_type="enum", enum_values=EXPENSE_CATEGORIES, example="研发费用"),
+        _col("expense_category", "费用大类", required=True, description="按本公司口径填写", enum_values=EXPENSE_CATEGORIES, example="研发费用"),
         _col("expense_subject", "费用科目", required=True, example="差旅费"),
         _col("cost_center", "成本中心", example="CC-100"),
         _col("amount", "金额", required=True, column_type="number", description="单位：元", example="12500"),
-        _col("currency", "币种", column_type="enum", enum_values=CURRENCIES, example="CNY"),
+        _col("currency", "币种", description="如 CNY / USD", enum_values=CURRENCIES, example="CNY"),
         _col("doc_no", "单据号", required=True, example="BX202500123"),
-        _col("approval_status", "审批状态", column_type="enum", enum_values=APPROVAL_STATUSES, example="已审批"),
+        _col("approval_status", "审批状态", description="如 已审批 / 审批中", enum_values=APPROVAL_STATUSES, example="已审批"),
         _col("summary", "摘要", example="客户拜访"),
         _col("supplier_name", "供应商", example="德勤咨询"),
     ),
@@ -95,8 +93,8 @@ TPL_REVENUE_COST_DETAIL = ImportTemplateDefinition(
     fact_table="fact_revenue_cost",
     columns=(
         _col("trans_date", "日期", required=True, column_type="date", example="2025-06-15"),
-        _col("entity_name", "主体", required=True, column_type="enum", enum_values=ENTITY_NAMES, example="集团"),
-        _col("business_line", "业务线", column_type="enum", enum_values=BUSINESS_LINES, example="智能安防"),
+        _col("entity_name", "主体", required=True, description="法人主体或运营主体，按实际上传填写", example="A公司"),
+        _col("business_line", "业务线", description="与管理报表配置中的业务线对应", example="轮胎"),
         _col("customer_code", "客户编号", example="C-001"),
         _col("customer_name", "客户名称", required=True, example="豪威集团"),
         _col("sales_person", "销售人员", example="张明"),
@@ -107,13 +105,13 @@ TPL_REVENUE_COST_DETAIL = ImportTemplateDefinition(
         _col("model", "汇报型号", example="AX650N"),
         _col("region", "销售区域", example="华东"),
         _col("province", "省份", example="广东"),
-        _col("revenue_type", "类型", column_type="enum", enum_values=REVENUE_TYPES, example="收入"),
+        _col("revenue_type", "类型", description="如 收入 / 成本", enum_values=REVENUE_TYPES, example="收入"),
         _col("quantity", "数量", column_type="number", example="1000"),
         _col("unit_price", "单价", column_type="number", description="单位：元", example="85.5"),
         _col("revenue", "收入", column_type="number", description="单位：元", example="85500"),
         _col("cost", "成本", column_type="number", description="单位：元", example="62000"),
         _col("doc_no", "单据号", required=True, example="SO-2025001"),
-        _col("currency", "币种", column_type="enum", enum_values=CURRENCIES, example="CNY"),
+        _col("currency", "币种", description="如 CNY / USD", enum_values=CURRENCIES, example="CNY"),
     ),
 )
 
@@ -126,7 +124,7 @@ TPL_FUND_TRANSACTION = ImportTemplateDefinition(
     fact_table="fact_fund_transaction",
     columns=(
         _col("trans_date", "交易日期", required=True, column_type="date", example="2025-06-15"),
-        _col("entity_name", "运营主体", required=True, column_type="enum", enum_values=FUND_ENTITIES, example="集团合并"),
+        _col("entity_name", "运营主体", required=True, description="运营主体，按实际上传填写", example="A公司"),
         _col("bank_account", "银行账户", required=True, example="6222021234567890001"),
         _col("bank_name", "开户银行", example="招商银行"),
         _col("counterparty", "交易对手", example="豪威集团"),
@@ -135,8 +133,8 @@ TPL_FUND_TRANSACTION = ImportTemplateDefinition(
         _col("balance_after", "账户余额", column_type="number", description="单位：元", example="12500000"),
         _col("summary", "交易摘要", example="货款支付"),
         _col("trans_type", "交易类型", example="转账"),
-        _col("business_source", "业务来源", column_type="enum", enum_values=BUSINESS_SOURCES, example="OA报销"),
-        _col("currency", "币种", column_type="enum", enum_values=CURRENCIES, example="CNY"),
+        _col("business_source", "业务来源", description="按本公司口径填写", enum_values=BUSINESS_SOURCES, example="OA报销"),
+        _col("currency", "币种", description="如 CNY / USD", enum_values=CURRENCIES, example="CNY"),
         _col("doc_no", "单据号", required=True, example="FD-000001"),
     ),
 )
@@ -150,7 +148,7 @@ TPL_BUDGET = ImportTemplateDefinition(
     fact_table="fact_budget",
     columns=(
         _col("period_month", "预算期间", required=True, column_type="month", description="YYYY-MM", example="2025-06"),
-        _col("entity_name", "主体", required=True, column_type="enum", enum_values=ENTITY_NAMES, example="集团"),
+        _col("entity_name", "主体", required=True, description="法人主体或运营主体，按实际上传填写", example="A公司"),
         _col("dimension_type", "预算维度类型", required=True, example="部门"),
         _col("dimension_name", "预算维度名称", required=True, example="研发一部"),
         _col("budget_amount", "预算编制额", required=True, column_type="number", description="单位：元", example="500000"),

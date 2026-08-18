@@ -9,3 +9,7 @@ __pycache__/
 storage/datasets/*.json
 storage/datasets/active.json
 !storage/datasets/.gitkeep
+
+# Per-company management report configs (local only)
+storage/mgmt_configs/*.json
+!storage/mgmt_configs/.gitkeep
